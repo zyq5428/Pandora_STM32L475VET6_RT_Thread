@@ -438,6 +438,20 @@ menu "On-chip Peripheral Drivers"
                         int
                         default 33
                 endif
+
+            config BSP_USING_I2C5
+                bool "Enable I2C5 Bus (SSD1306)"
+                default n
+
+                if BSP_USING_I2C5
+                    # Notice: PB8 --> 24; PB9 --> 25
+                    config BSP_I2C5_SCL_PIN
+                        int
+                        default 24
+                    config BSP_I2C5_SDA_PIN
+                        int
+                        default 25
+                endif
         endif
 
     menuconfig BSP_USING_TIM

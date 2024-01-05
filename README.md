@@ -72,7 +72,7 @@
 接着在Github上新建一个裸工程，不要添加任何内容。
 
 然后采用如下操作，将我们的工程和Github建立连接：
-``` {.line-numbers highlight=[1]}
+``` {.line-numbers highlight=[5]}
 git init
 git add -A
 git commit
@@ -84,3 +84,29 @@ git push -u origin main
   * 执行menuconfig命令
   * 选择Exit退出即可
 
+## 应用程序移植
+
+### GPIO引脚编号
+
+RT-Thread 提供的引脚编号需要和芯片的引脚号区分开来，它们并不是同一个概念，引脚编号由 PIN 设备驱动程序定义，和具体的芯片相关。通过分析drv_gpio.c的stm32_pin_get函数可知，RT-Thread使用了十六进制标识引脚编号，高字节表示port（相对于'A'的差值），低字节表示num（相对于'00'的差值），如：
+  * PA.15为0x0F,PB.3为0x13
+
+### 新增OLED支持
+
+在board文件夹下的Kconfig文件中添加如下配置，增加I2C5总线的驱动：
+
+```  {.line-numbers highlight=[6]}
+            config BSP_USING_I2C5
+                bool "Enable I2C5 Bus (SSD1306)"
+                default n
+
+                if BSP_USING_I2C5
+                    # Notice: PB8 --> 24; PB9 --> 25
+                    config BSP_I2C5_SCL_PIN
+                        int
+                        default 54
+                    config BSP_I2C5_SDA_PIN
+                        int
+                        default 33
+                endif
+```
