@@ -28,16 +28,16 @@ static rt_thread_t tid1 = RT_NULL;
 
 void user_alarm_callback(rt_alarm_t alarm, time_t timestamp)
 {
-    rt_event_send(rtc_event, EVENT_FLAG1);
-//    static u_int8_t sec = 0;
-//
-//    if ( sec < (u_int8_t)(60 / MINUTE_TIMESLICE) )
-//        sec++;
-//    else {
-//        /* Send event */
-//        rt_event_send(rtc_event, EVENT_FLAG1);
-//        sec = 0;
-//    }
+//    rt_event_send(rtc_event, EVENT_FLAG1);
+    static u_int8_t sec = 0;
+
+    if ( sec < (u_int8_t)(60 / MINUTE_TIMESLICE) )
+        sec++;
+    else {
+        /* Send event */
+        rt_event_send(rtc_event, EVENT_FLAG1);
+        sec = 0;
+    }
 }
 
 /* The entry function of the thread */
@@ -68,7 +68,7 @@ static void alarm_entry(void *parameter)
         return;
     }
     /* set date */
-    ret = set_date(2023, 1, 1);
+    ret = set_date(2024, 1, 1);
     if (ret != RT_EOK)
     {
         LOG_E("set RTC date failed");
@@ -87,8 +87,8 @@ static void alarm_entry(void *parameter)
     gmtime_r(&now,&p_tm);
     LOG_D("set Alarm:%s", ctime(&now));
 
-//    setup.flag = RT_ALARM_SECOND;
-    setup.flag = RT_ALARM_MINUTE;
+    setup.flag = RT_ALARM_SECOND;
+//    setup.flag = RT_ALARM_MINUTE;
     setup.wktime.tm_year = p_tm.tm_year;
     setup.wktime.tm_mon = p_tm.tm_mon;
     setup.wktime.tm_mday = p_tm.tm_mday;

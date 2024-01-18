@@ -13,7 +13,7 @@
 #include "alex.h"
 
 #define DBG_TAG "aht10"
-#define DBG_LVL DBG_LOG
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #define THREAD_PRIORITY         20

@@ -14,7 +14,7 @@
 #include "type_to_ascii.h"
 
 #define DBG_TAG "oled"
-#define DBG_LVL DBG_LOG
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #define THREAD_PRIORITY         23
@@ -55,6 +55,7 @@ static void display_menu(void)
 /* The entry function of the thread */
 static void oled_entry(void *parameter)
 {
+    rt_ssize_t recv_size;
     rt_uint32_t recv;
     MsgData_t msg;
     Aht10Data_t *ath10_data_ptr;
@@ -72,7 +73,8 @@ static void oled_entry(void *parameter)
     while (1)
     {
         /* Receive messages from the message queue into MSG */
-        if (rt_mq_recv(&mq, (void*)&msg, sizeof(MsgData_t), RT_WAITING_FOREVER) == RT_EOK)
+        recv_size = rt_mq_recv(&mq, (void*)&msg, sizeof(MsgData_t), RT_WAITING_FOREVER);
+        if (recv_size > 0)
         {
             switch ( msg.from )
             {
@@ -132,8 +134,10 @@ static void oled_entry(void *parameter)
                 ssd1306_UpdateScreen();
             }
 
-        } else {
-            LOG_E("recv a message failed.");
+        } else if (recv_size == -RT_ETIMEOUT) {
+            LOG_E("recv a message TIMEOUT.");
+        } else if (recv_size == -RT_ERROR) {
+            LOG_E("recv a message TIMEOUT.");
         }
     }
 }

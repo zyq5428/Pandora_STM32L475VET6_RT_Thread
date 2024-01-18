@@ -13,7 +13,7 @@
 #include "alex.h"
 
 #define DBG_TAG "ap3216c"
-#define DBG_LVL DBG_LOG
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #define THREAD_PRIORITY         20

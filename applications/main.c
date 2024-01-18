@@ -73,14 +73,14 @@ int main(void)
 
     /* Start the led thread, priority 25 */
     led_sample_start();
-    /* Start the oled thread, priority 23 */
-    oled_sample_start();
     /* Start the alarm thread, priority 18 */
     alarm_sample_start();
     /* Start the aht10 thread, priority 20 */
     aht10_sample_start();
     /* Start the ap3216c thread, priority 20 */
     ap3216c_sample_start();
+    /* Start the oled thread, priority 23 */
+    oled_sample_start();
 
     return RT_EOK;
 }
