@@ -8,7 +8,7 @@
  * 2018-12-13     zylx         first version
  * 2021-01-23     thread-liu   Fix the timer clock frequency doubling problem
  */
-
+#include <rtdevice.h>
 #include <board.h>
 
 #ifdef BSP_USING_PWM
