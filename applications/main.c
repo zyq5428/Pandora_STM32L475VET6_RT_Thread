@@ -20,6 +20,7 @@
 #include "led.h"
 #include "alarm_sample.h"
 #include "oled_sample.h"
+#include "lcd_sample.h"
 #include "aht10_sample.h"
 #include "ap3216c_sample.h"
 
@@ -80,7 +81,9 @@ int main(void)
     /* Start the ap3216c thread, priority 20 */
     ap3216c_sample_start();
     /* Start the oled thread, priority 23 */
-    oled_sample_start();
+//    oled_sample_start();
+    /* Start the lcd thread, priority 23 */
+    lcd_sample_start();
 
     return RT_EOK;
 }

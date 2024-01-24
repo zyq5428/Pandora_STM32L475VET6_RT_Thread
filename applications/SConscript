@@ -10,6 +10,7 @@ alarm_sample.c
 aht10_sample.c
 ap3216c_sample.c
 oled_sample.c
+lcd_sample.c
 ''')
 
 if GetDepend(['PKG_USING_RTDUINO']) and not GetDepend(['RTDUINO_NO_SETUP_LOOP']):
