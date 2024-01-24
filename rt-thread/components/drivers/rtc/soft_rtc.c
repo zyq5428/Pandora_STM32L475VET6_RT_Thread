@@ -34,7 +34,7 @@
 #define RTC_AUTO_SYNC_PERIOD 3600
 #endif
 
-static struct rt_work rtc_sync_work;
+//static struct rt_work rtc_sync_work;
 static rt_device_t    source_device = RT_NULL;
 
 static struct rt_device soft_rtc_dev;

@@ -25,21 +25,32 @@
 static rt_thread_t tid1 = RT_NULL;
 
 static time_t now;
-static char humidity_menu[]       = "Hum :   . %";
-static char temperature_menu[]    = "Temp:   .  ";
-static char proximity_menu[]      = "Ps  :      ";
-static char brightness_menu[]     = "Lux :    . ";
-static char sec_clear[]           = " ";
-#define CLEAR_POSITION              16
+static char time_now[]          = " 1 00:00:00 2024";
+static char humidity_menu[]     = "Hum :   . %";
+static char temperature_menu[]  = "Temp:   .  ";
+static char proximity_menu[]    = "Ps  :      ";
+static char brightness_menu[]   = "Lux :    . ";
+//static char sec_clear[]         = " ";
+//#define CLEAR_POSITION              16
+
+static void update_time(void)
+{
+    /* get time */
+    now = time(RT_NULL);
+    char *p = ctime(&now)
+    LOG_D("%s", p);
+    for(rt_uint8_t i = 0; i < 16; i++)
+    {
+        time_now[i] = *(p+8+i);
+    }
+}
 
 static void display_menu(void)
 {
     lcd_clear(BLACK);
     lcd_set_color(BLACK, WHITE);
-    /* get time */
-    now = time(RT_NULL);
-    lcd_show_string(24, 0, 24, ctime(&now)+8);
-    lcd_show_string(24+12*CLEAR_POSITION, 0, 24, sec_clear);
+    update_time();
+    lcd_show_string(24, 0, 24, time_now);
     lcd_show_string(54, 62, 24, humidity_menu);
     lcd_show_string(54, 92, 24, temperature_menu);
     lcd_show_string(54, 122, 24, proximity_menu);
@@ -109,11 +120,8 @@ static void lcd_entry(void *parameter)
                               RT_EVENT_FLAG_AND | RT_EVENT_FLAG_CLEAR,
                               0, &recv) == RT_EOK);
             {
-                /* get time */
-                now = time(RT_NULL);
-                LOG_D("%s", ctime(&now));
-                lcd_show_string(24, 0, 24, ctime(&now)+8);
-                lcd_show_string(24+12*CLEAR_POSITION, 0, 24, sec_clear);
+                update_time();
+                lcd_show_string(24, 0, 24, time_now);
                 lcd_show_string(54, 62, 24, humidity_menu);
                 lcd_show_string(54, 92, 24, temperature_menu);
                 lcd_show_string(54, 122, 24, proximity_menu);
