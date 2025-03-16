@@ -26,6 +26,11 @@ config BOARD_STM32L475_ATK_PANDORA
     bool
     default y
 
+config PLATFORM_DIR
+    string
+    option env="PLATFORM_DIR"
+    default "D:/RT-ThreadStudio/workspace/Pandora_STM32L475VET6_RT_Thread/platform"
+
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "libraries/Kconfig"

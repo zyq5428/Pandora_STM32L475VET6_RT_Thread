@@ -195,6 +195,18 @@
 /* Wiced WiFi */
 
 /* end of Wiced WiFi */
+
+/* CYW43012 WiFi */
+
+/* end of CYW43012 WiFi */
+
+/* BL808 WiFi */
+
+/* end of BL808 WiFi */
+
+/* CYW43439 WiFi */
+
+/* end of CYW43439 WiFi */
 /* end of Wi-Fi */
 
 /* IoT Cloud */
@@ -221,15 +233,18 @@
 
 /* LVGL: powerful and easy-to-use embedded GUI library */
 
+#define PKG_USING_LVGL
+#define PKG_LVGL_THREAD_PRIO 20
+#define PKG_LVGL_THREAD_STACK_SIZE 4096
+#define PKG_LVGL_DISP_REFR_PERIOD 5
+#define PKG_LVGL_USING_EXAMPLES
+#define PKG_LVGL_USING_V080311
+#define PKG_LVGL_VER_NUM 0x080311
 /* end of LVGL: powerful and easy-to-use embedded GUI library */
 
 /* u8g2: a monochrome graphic library */
 
 /* end of u8g2: a monochrome graphic library */
-
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-/* end of PainterEngine: A cross-platform graphics application framework written in C language */
 /* end of multimedia packages */
 
 /* tools packages */
@@ -257,15 +272,45 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
+/* end of STM32 HAL & SDK Drivers */
+
+/* Infineon HAL Packages */
+
+/* end of Infineon HAL Packages */
 
 /* Kendryte SDK */
 
 /* end of Kendryte SDK */
+
+/* WCH HAL & SDK Drivers */
+
+/* end of WCH HAL & SDK Drivers */
+
+/* AT32 HAL & SDK Drivers */
+
+/* end of AT32 HAL & SDK Drivers */
+/* end of HAL & SDK Drivers */
+
+/* sensors drivers */
+
+/* end of sensors drivers */
+
+/* touch drivers */
+
+/* end of touch drivers */
 /* end of peripheral libraries and drivers */
 
 /* AI packages */
 
 /* end of AI packages */
+
+/* Signal Processing and Control Algorithm Packages */
+
+/* end of Signal Processing and Control Algorithm Packages */
 
 /* miscellaneous packages */
 
@@ -285,9 +330,9 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
-/* end of Projects */
+/* end of Projects and Demos */
 
 /* Sensors */
 
@@ -317,6 +362,8 @@
 
 /* Other */
 
+/* end of Other */
+
 /* Signal IO */
 
 /* end of Signal IO */
@@ -334,6 +381,7 @@
 
 #define BSP_USING_STLINK_TO_USART
 #define BSP_USING_SPI_LCD
+#define BSP_USING_LVGL
 /* end of Onboard Peripheral Drivers */
 
 /* On-chip Peripheral Drivers */
