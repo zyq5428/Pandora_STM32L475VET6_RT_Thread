@@ -43,6 +43,7 @@ typedef enum {
 
 /* Event control block */
 extern rt_event_t rtc_event;
+extern rt_event_t lvgl_event;
 
 /* pointer to a semaphore */
 extern rt_sem_t rtc_sem;

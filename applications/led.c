@@ -13,13 +13,14 @@
 #ifndef RT_USING_NANO
 #include <rtdevice.h>
 #endif /* RT_USING_NANO */
+#include "alex.h"
 
 #define DBG_TAG "led"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #define THREAD_PRIORITY         25
-#define THREAD_STACK_SIZE       256
+#define THREAD_STACK_SIZE       1024
 #define THREAD_TIMESLICE        5
 
 static rt_thread_t tid1 = RT_NULL;
@@ -47,11 +48,15 @@ static void led_entry(void *parameter)
         /* Set the level low */
         rt_pin_write(LED_G_PIN, PIN_LOW);
         LOG_D("Green led On");
+        /* Send event */
+        rt_event_send(lvgl_event, EVENT_FLAG3);
         rt_thread_mdelay(1000);
 
         /* Set the level high */
         rt_pin_write(LED_G_PIN, PIN_HIGH);
         LOG_D("Green led Off");
+        /* Send event */
+        rt_event_send(lvgl_event, EVENT_FLAG1);
         rt_thread_mdelay(1000);
     }
 }

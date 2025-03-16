@@ -22,6 +22,8 @@
 #include "oled_sample.h"
 #ifndef BSP_USING_LVGL
 #include "lcd_sample.h"
+#else
+#include "lvgl_sample.h"
 #endif
 #include "aht10_sample.h"
 #include "ap3216c_sample.h"
@@ -37,6 +39,7 @@
 
 /* Event control block */
 rt_event_t rtc_event = RT_NULL;
+rt_event_t lvgl_event = RT_NULL;
 
 /* pointer to a semaphore */
 rt_sem_t rtc_sem = RT_NULL;
@@ -55,6 +58,7 @@ int main(void)
 
     /* Create event */
     rtc_event = rt_event_create("rtc_event", RT_IPC_FLAG_PRIO);
+    lvgl_event = rt_event_create("lvgl_event", RT_IPC_FLAG_PRIO);
 
     /* Create a dynamic semaphore with an initial value of 0 */
     rtc_sem = rt_sem_create("rtc_sem", 0, RT_IPC_FLAG_PRIO);
@@ -86,6 +90,8 @@ int main(void)
 //    oled_sample_start();
     /* Start the lcd thread, priority 23 */
 //    lcd_sample_start();
+    /* Start the lvgl sample thread, priority 23 */
+    lvgl_sample_start();
 
     return RT_EOK;
 }
