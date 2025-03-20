@@ -43,28 +43,49 @@ static void event_handler(lv_event_t * e)
 static void set_status(lv_timer_t * timer)
 {
     LV_UNUSED(timer);
-    lv_obj_t * label = timer->user_data;
+    lv_obj_t * btn = timer->user_data;
     if (led_code)
     {
-        lv_label_set_text(label, "ON");
+        lv_obj_set_style_bg_color(btn, lv_palette_main(LV_PALETTE_GREEN), LV_PART_MAIN);
+        lv_label_set_text(lv_obj_get_child(btn, 0), "ON");
     } else {
-        lv_label_set_text(label, "OFF");
+        lv_obj_set_style_bg_color(btn, lv_palette_main(LV_PALETTE_GREY), LV_PART_MAIN);
+        lv_label_set_text(lv_obj_get_child(btn, 0), "OFF");
     }
 }
 
 static void lv_example(void)
 {
-    lv_obj_t * label;
+    int temperature = 25;
+    int humidity = 65;
+    int brightness = 1000;
+    int proximity = 88;
 
     lv_obj_t * btn = lv_btn_create(lv_scr_act());
     lv_obj_add_event_cb(btn, event_handler, LV_EVENT_ALL, NULL);
-    lv_obj_align(btn, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_align(btn, LV_ALIGN_CENTER, 0, -80);
 
-    label = lv_label_create(btn);
-    lv_label_set_text(label, "LED");
-    lv_obj_center(label);
+    lv_obj_t * led_label = lv_label_create(btn);
+    lv_label_set_text(led_label, "LED");
+    lv_obj_center(led_label);
 
-    lv_timer_create(set_status, 100, label);
+    lv_obj_t * temperature_label = lv_label_create(lv_scr_act());
+    lv_obj_align(temperature_label, LV_ALIGN_CENTER, 0, -40);
+    lv_label_set_text_fmt(temperature_label, "Temperature: %d°C", temperature);
+
+    lv_obj_t * humidity_label = lv_label_create(lv_scr_act());
+    lv_obj_align(humidity_label, LV_ALIGN_CENTER, 0, 0);
+    lv_label_set_text_fmt(humidity_label, "Humidity: %d%%", humidity);
+
+    lv_obj_t * brightness_label = lv_label_create(lv_scr_act());
+    lv_obj_align(brightness_label, LV_ALIGN_CENTER, 0, 40);
+    lv_label_set_text_fmt(brightness_label, "Brightness: %d Lux", brightness);
+
+    lv_obj_t * proximity_label = lv_label_create(lv_scr_act());
+    lv_obj_align(proximity_label, LV_ALIGN_CENTER, 0, 80);
+    lv_label_set_text_fmt(proximity_label, "Proximity: %d mm", proximity);
+
+    lv_timer_create(set_status, 100, btn);
 }
 
 void lv_user_gui_init(void)
