@@ -30,6 +30,20 @@ static rt_thread_t tid1 = RT_NULL;
 
 /* led status code */
 static rt_uint8_t led_code = 0;
+static float humidity = 65.0;
+static float temperature = 27.0;
+static rt_uint16_t ps_data = 100;
+static float brightness = 555.0;
+static time_t now;
+static char *ptime;
+
+static void update_time(void)
+{
+    /* get time */
+    now = time(RT_NULL);
+    ptime = ctime(&now);
+    LOG_D("%s", p);
+}
 
 static void event_handler(lv_event_t * e)
 {
@@ -43,24 +57,31 @@ static void event_handler(lv_event_t * e)
 static void set_status(lv_timer_t * timer)
 {
     LV_UNUSED(timer);
-    lv_obj_t * btn = timer->user_data;
-    if (led_code)
-    {
-        lv_obj_set_style_bg_color(btn, lv_palette_main(LV_PALETTE_GREEN), LV_PART_MAIN);
-        lv_label_set_text(lv_obj_get_child(btn, 0), "ON");
-    } else {
-        lv_obj_set_style_bg_color(btn, lv_palette_main(LV_PALETTE_GREY), LV_PART_MAIN);
-        lv_label_set_text(lv_obj_get_child(btn, 0), "OFF");
-    }
+//    lv_obj_t * btn = timer->user_data;
+//    if (led_code)
+//    {
+//        lv_obj_set_style_bg_color(btn, lv_palette_main(LV_PALETTE_GREEN), LV_PART_MAIN);
+//        lv_label_set_text(lv_obj_get_child(btn, 0), "ON");
+//    } else {
+//        lv_obj_set_style_bg_color(btn, lv_palette_main(LV_PALETTE_GREY), LV_PART_MAIN);
+//        lv_label_set_text(lv_obj_get_child(btn, 0), "OFF");
+//    }
+    lv_obj_t * label = timer->user_data;
+    lv_label_set_text_fmt(label,
+            "%s\n"
+            "Temperature: %d°C\n\n"
+            "Humidity: %d%%\n\n"
+            "Brightness: %d Lux\n\n"
+            "Proximity: %d mm",
+            ptime,
+            (rt_uint16_t)temperature,
+            (rt_uint16_t)humidity,
+            (rt_uint16_t)brightness,
+            ps_data);
 }
 
 static void lv_example(void)
 {
-    int temperature = 25;
-    int humidity = 65;
-    int brightness = 1000;
-    int proximity = 88;
-
     lv_obj_t * btn = lv_btn_create(lv_scr_act());
     lv_obj_add_event_cb(btn, event_handler, LV_EVENT_ALL, NULL);
     lv_obj_align(btn, LV_ALIGN_CENTER, 0, -80);
@@ -69,65 +90,82 @@ static void lv_example(void)
     lv_label_set_text(led_label, "LED");
     lv_obj_center(led_label);
 
-    lv_obj_t * temperature_label = lv_label_create(lv_scr_act());
-    lv_obj_align(temperature_label, LV_ALIGN_CENTER, 0, -40);
-    lv_label_set_text_fmt(temperature_label, "Temperature: %d°C", temperature);
+    update_time();
 
-    lv_obj_t * humidity_label = lv_label_create(lv_scr_act());
-    lv_obj_align(humidity_label, LV_ALIGN_CENTER, 0, 0);
-    lv_label_set_text_fmt(humidity_label, "Humidity: %d%%", humidity);
+    lv_obj_t * main_label = lv_label_create(lv_scr_act());
+    lv_label_set_text_fmt(main_label,
+            "%s\n"
+            "Temperature: %d°C\n\n"
+            "Humidity: %d%%\n\n"
+            "Brightness: %d Lux\n\n"
+            "Proximity: %d mm",
+            ptime,
+            (rt_uint16_t)temperature,
+            (rt_uint16_t)humidity,
+            (rt_uint16_t)brightness,
+            ps_data);
+    lv_obj_align(main_label, LV_ALIGN_CENTER, 0, 0);
 
-    lv_obj_t * brightness_label = lv_label_create(lv_scr_act());
-    lv_obj_align(brightness_label, LV_ALIGN_CENTER, 0, 40);
-    lv_label_set_text_fmt(brightness_label, "Brightness: %d Lux", brightness);
-
-    lv_obj_t * proximity_label = lv_label_create(lv_scr_act());
-    lv_obj_align(proximity_label, LV_ALIGN_CENTER, 0, 80);
-    lv_label_set_text_fmt(proximity_label, "Proximity: %d mm", proximity);
-
-    lv_timer_create(set_status, 100, btn);
+    lv_timer_create(set_status, 100, main_label);
 }
 
 void lv_user_gui_init(void)
 {
     /* display demo; you may replace with your LVGL application at here */
-//    extern void lv_demo_calendar(void);
-//    lv_demo_calendar();
-     lv_example();
+//    extern void lv_example_menu_5(void);
+//    lv_example_menu_5();
+    lv_example();
 }
 
 /* The entry function of the thread */
 static void lvgl_entry(void *parameter)
 {
+    rt_ssize_t recv_size;
     rt_uint32_t recv;
-
-    LOG_D("lvgl thread running");
+    MsgData_t msg;
+    Aht10Data_t *ath10_data_ptr;
+    AP3216CData_t *ap3216c_data_ptr;
 
     while (1)
     {
-        /* Forever wait, either Event 1 can trigger, event flag cleared after receiving it */
-        if (rt_event_recv(lvgl_event, EVENT_FLAG1 | EVENT_FLAG3,
-                          RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
-                          RT_WAITING_FOREVER, &recv) == RT_EOK)
+        /* Receive messages from the message queue into MSG */
+        recv_size = rt_mq_recv(&mq, (void*)&msg, sizeof(MsgData_t), RT_WAITING_FOREVER);
+        if (recv_size > 0)
         {
-            if (recv & EVENT_FLAG1)
+            switch ( msg.from )
             {
-                led_code = 0;
-                LOG_D("Received EVENT_FLAG1, led_code set to 0");
+            case AHT10:
+                /* The message is successfully received and the corresponding data processing is carried out */
+                ath10_data_ptr = msg.data_ptr;
+                humidity = ath10_data_ptr->humidity;
+                temperature = ath10_data_ptr->temperature;
+
+                rt_sem_release(aht10_sem);
+
+                break;
+            case AP3216C:
+                /* The message is successfully received and the corresponding data processing is carried out */
+                ap3216c_data_ptr = msg.data_ptr;
+                ps_data = ap3216c_data_ptr->ps_data;
+                brightness = ap3216c_data_ptr->brightness;
+
+                rt_sem_release(ap3216c_sem);
+
+                break;
+            default:
+                break;
             }
-            else if (recv & EVENT_FLAG3)
+
+            /* Forever wait, either Event 3 or 5 can trigger, event flag cleared after receiving it */
+            if (rt_event_recv(rtc_event, (EVENT_FLAG3 | EVENT_FLAG5),
+                              RT_EVENT_FLAG_AND | RT_EVENT_FLAG_CLEAR,
+                              0, &recv) == RT_EOK);
             {
-                led_code = 1;
-                LOG_D("Received EVENT_FLAG3, led_code set to 1");
+                update_time();
             }
-            else
-            {
-                LOG_W("Received unexpected event flags: 0x%x", recv);
-            }
-        }
-        else
-        {
-            LOG_E("Event receive failed");
+
+        } else {
+            LOG_E("recv a message Fail.");
         }
     }
 }

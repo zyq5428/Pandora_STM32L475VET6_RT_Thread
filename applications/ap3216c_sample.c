@@ -23,7 +23,7 @@
 static rt_thread_t tid1 = RT_NULL;
 
 #define AP3216C_I2C_BUS_NAME    "i2c3"  /* The name of the I2C bus device to which the sensor is connected */
-#define AP3216C_DATA_NAX        10  /* The maximum number of data that can be read from the array */
+#define AP3216C_DATA_MAX        10  /* The maximum number of data that can be read from the array */
 
 /* The entry function of the thread */
 static void ap3216c_entry(void *parameter)
@@ -36,7 +36,7 @@ static void ap3216c_entry(void *parameter)
     rt_uint16_t ps_data = 0;
     float brightness = 0.0;
 
-    static AP3216CData_t sensor_data[AP3216C_DATA_NAX];
+    static AP3216CData_t sensor_data[AP3216C_DATA_MAX];
     MsgData_t msg = {
             .from       = AP3216C,
             .to         = OLED,
@@ -48,7 +48,7 @@ static void ap3216c_entry(void *parameter)
 
     while (1)
     {
-        if ( cnt == AP3216C_DATA_NAX )
+        if ( cnt == AP3216C_DATA_MAX )
             cnt = 0;
 
         /* Forever wait, either Event 1 can trigger, event flag cleared after receiving it */

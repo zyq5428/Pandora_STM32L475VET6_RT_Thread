@@ -23,7 +23,7 @@
 static rt_thread_t tid1 = RT_NULL;
 
 #define AHT10_I2C_BUS_NAME      "i2c4"  /* The name of the I2C bus device to which the sensor is connected */
-#define AHT10_DATA_NAX          10  /* The maximum number of data that can be read from the array */
+#define AHT10_DATA_MAX          10  /* The maximum number of data that can be read from the array */
 
 /* The entry function of the thread */
 static void aht10_entry(void *parameter)
@@ -34,7 +34,7 @@ static void aht10_entry(void *parameter)
     float humidity = 0.0;
     float temperature = 0.0;
 
-    static Aht10Data_t sensor_data[AHT10_DATA_NAX];
+    static Aht10Data_t sensor_data[AHT10_DATA_MAX];
     MsgData_t msg = {
             .from       = AHT10,
             .to         = OLED,
@@ -46,7 +46,7 @@ static void aht10_entry(void *parameter)
 
     while (1)
     {
-        if ( cnt == AHT10_DATA_NAX )
+        if ( cnt == AHT10_DATA_MAX )
             cnt = 0;
 
         /* Forever wait, either Event 1 can trigger, event flag cleared after receiving it */
